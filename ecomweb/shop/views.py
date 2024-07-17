@@ -125,32 +125,3 @@ def checkout(request):
         id = order.order_id
     return render(request, 'shop/checkout.html')
 
-
-stripe.api_key = settings.STRIPE_SECRET_KEY
-
-
-def product_detail(request, product_id):
-    product = Product.objects.get(id=product_id)
-    id = Order.order_id
-    if request.method == 'POST':
-        token = request.POST.get('stripeToken')
-        try:
-            charge = stripe.Charge.create(
-                amount=int(product.price * 100),  # Stripe charges are in cents
-                currency='inr',
-                description=product.product_name,
-                source=token,
-            )
-            order = Order.objects.create(
-                product=product,
-                stripe_payment_intent_id=charge.id,
-                has_paid=True
-            )
-            return redirect('paymentstatus.html', order_id=order.id)
-        except stripe.error.StripeError:
-            # Handle the error
-            return redirect('paymentstatus.html')
-
-    return render(request, 'product_detail.html',
-                  {'product': product, 'stripe_publishable_key': settings.STRIPE_PUBLISHABLE_KEY, 'id':id})
-
