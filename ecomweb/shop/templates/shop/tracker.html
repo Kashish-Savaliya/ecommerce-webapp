@@ -1,0 +1,117 @@
+{% extends 'shop/basic.html' %}
+{% block title %} My Awesome Cart Tracker{% endblock %}
+{% block body %}
+<div class="container">
+    <div class="col my-4">
+        <h2> Enter Your Order Id and Email address to track your order </h2>
+
+        <form class="row g-3" method="post" action="#" id="trackerForm">{% csrf_token %}
+            <div class="col-md-6">
+                <label for="orderId" class="form-label">Order ID</label>
+                <input type="text" class="form-control" id="orderId" name="orderId">
+            </div>
+            <div class="col-md-6">
+                <label for="email" class="form-label">Email</label>
+                <input type="email" class="form-control" id="email" name="email">
+            </div>
+            <div class="col-12">
+                <button type="submit" class="btn btn-primary">Track Order</button>
+            </div>
+        </form>
+    </div>
+    <div class="col my-4">
+        <h2>Your Order Status :</h2>
+        <div class="my-4">
+            <ul class="list-group" id="items">
+                Enter your order Id and Email and click Track Order to find details about your order!
+            </ul>
+        </div>
+    </div>
+    <div class="col my-4">
+        <h2>Your Order Details :</h2>
+        <div class="my-4">
+            <ul class="list-group" id="citems">
+
+            </ul>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block js %}
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    // This function is executed when the form with id "trackerForm" is submitted
+    $('#trackerForm').submit(function(event){
+
+        // Prevents the default form submission behavior
+        event.preventDefault();
+
+        // Empties the content of the list with id "items"
+        $('#items').empty();
+
+        // Collects form data
+        var formData = {
+            'orderId' : $('input[name=orderId]').val(), // Retrieves value of input field with name "orderId"
+            'email' : $('input[name=email]').val(),     // Retrieves value of input field with name "email"
+            'csrfmiddlewaretoken' : $('input[name=csrfmiddlewaretoken]').val() // Retrieves CSRF token
+        };
+
+        // Sends an AJAX POST request to the server
+        $.ajax({
+            type: 'POST',                           // HTTP method
+            url: '/shop/tracker/',                  // URL to send the request
+            data: formData,                         // Data to be sent (order ID, email, and CSRF token)
+            encode: true                            // Encode the data as a query string
+        })
+
+        // This function is executed when the request is successful
+        .done(function(data){
+            $('#citems').empty();
+            // Parse the JSON response received from the server
+            data = JSON.parse(data);
+            // Check if there are any updates received
+            if(data['status'] == 'success') {
+                updates = data['updates'];
+                // Iterate through each update
+                for(i = 0; i < updates.length; i++) {
+                    // Retrieve the text and time from the update
+                    let text = updates[i]['text'];
+                    let time = updates[i]['time'];
+
+                    // Create a list item with the update information and append it to the list
+                    mystr = `<li class="list-group-item d-flex justify-content-between align-items-start">
+                    <div class="ms-2 me-auto">
+                      ${text}
+                    </div>
+                    <span class="badge bg-primary rounded-pill">${time}</span>
+                    </li>`;
+                    $('#items').append(mystr);
+                }
+                  <!--Fetch the order details in cart-->
+                cart = JSON.parse(data['items_json']);
+                for(item in cart){
+                    let name = cart[item][1];
+                    let qty = cart[item][0];
+                    myStr =`<li class="list-group-item d-flex justify-content-between align-items-start">
+                    <div class="ms-2 me-auto">
+                      ${name}
+                    </div>
+                    <span class="badge bg-primary rounded-pill">${qty}</span>
+                    </li>`;
+                    $('#citems').append(myStr);
+                }
+            } else {
+
+                // If no updates were received, display a message
+                mystr = `<li class="list-group-item d-flex justify-content-between align-items-center">
+                        Sorry, We are not able to fetch this order id and email. Make sure to type correct order Id and email</li>`;
+                $('#items').append(mystr);
+                $('#citems').append(myStr);
+            }
+
+        });
+
+    });
+</script>
+{% endblock %}

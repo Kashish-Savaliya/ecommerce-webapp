@@ -1,0 +1,36 @@
+Settings: The settings submodule (django.conf.settings) contains the configuration settings defined in the settings.py file of a Django project.
+ These settings include database configuration, middleware settings, static and media file configurations, installed apps, and more.
+
+URL Configuration: The urls submodule (django.conf.urls) provides functions and classes for configuring URL patterns in a Django project.
+ This includes the url() and include() functions used to define URL patterns in the urls.py files of Django apps.
+
+Static Files Configuration: The static submodule (django.conf.urls.static) contains functions for serving static files (e.g., CSS, JavaScript, images) during development.
+ This includes the static() function used to dynamically add URL patterns for serving static files.
+
+Lazy Settings: The lazy_settings submodule (django.conf.lazy_settings) provides utilities for accessing Django settings lazily, which can be useful for avoiding circular imports.
+
+
+
+Database operations------>
+ from django.utils import timezone
+>>> from shop.models import Product
+>>> Product.objects.all()
+<QuerySet [<Product: Dress>, <Product: nightwear>, <Product: makeup>, <Product: abcd>]>
+my_prod = Product(product_name='watch', category='apparels', sub_category='watches', price=1200, desc="men's watch", pub_date=timezone.now())
+>>> my_prod.save()
+>>> my_prod.product_name
+'watch'
+>>> Product.objects.all()
+<QuerySet [<Product: Dress>, <Product: nightwear>, <Product: makeup>, <Product: abcd>, <Product: watch>]>
+>>> a = Product.objects.get(product_name='watch')
+>>> a.category
+'apparels'
+>>> a.price
+1200
+
+
+
+
+// To change the password of admin
+do:
+python manage.py changepassword username

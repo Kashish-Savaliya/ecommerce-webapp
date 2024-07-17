@@ -1,0 +1,27 @@
+{% extends 'shop/basic.html' %}
+{% block title %} {{product.product_name}} - My Awesome Cart {% endblock %}
+{% block css %}
+.container{
+margin-top : 38px;
+}
+{% endblock %}
+{% block body %}
+<div class="container">
+    <div class="row">
+        <div class="col-md-3">
+            <div class="row">
+                <img src="/media/{{product.image}}" width="180px" height="180px">
+            </div>
+            <div class="d-grid gap-2 d-md-block" style="margin-top: 17px; padding-left: 45px;">
+                <button class="btn btn-primary">Buy Now</button>
+                <button class="btn btn-primary">Add to Cart</button>
+            </div>
+        </div>
+        <div class="col-md-9">
+            <h5>{{product.product_name}}</h5>
+            <b><p>Rs.{{product.price}}</p></b>
+            <p>{{product.desc}}</p>
+        </div>
+    </div>
+</div>
+{% endblock %}

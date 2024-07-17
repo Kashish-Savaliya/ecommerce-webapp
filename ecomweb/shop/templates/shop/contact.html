@@ -1,0 +1,43 @@
+{% extends 'shop/basic.html' %}
+{% block title %} Contact - My Awesome Cart {% endblock %}
+
+{% block css %}
+.container{
+max-width : 964px;
+}
+{% endblock %}
+
+{% block body %}
+
+<div class="container my-4" >
+    <h2>Contact Us</h2>
+    <form action="/shop/contact/" method="post"> {% csrf_token %}
+        <div class="mb-3">
+            <label for="name" class="form-label">Name</label>
+            <input type="text" class="form-control" id="name" name="name">
+        </div>
+        <div class="mb-3">
+            <label for="email" class="form-label">Email address</label>
+            <input type="email" class="form-control" id="email" aria-describedby="emailHelp" name="email">
+            <div id="emailHelp" class="form-text">We'll never share your email with anyone else.</div>
+        </div>
+        <div class="mb-3">
+            <label for="phone" class="form-label">Phone no.</label>
+            <input type="tel" class="form-control" id="phone" name="phone">
+        </div>
+        <div class="mb-3">
+            <label for="desc" class="form-label">How can we help you?</label>
+            <textarea class="form-control" id="desc" rows="3" name="desc"></textarea>
+        </div>
+        <button type="submit" class="btn btn-success">Submit</button>
+    </form>
+</div>
+{% endblock %}
+{% block js %}
+<script>
+    {% if thank %}
+    alert("Thank you for submitting your queries! We'll get back to you as soon as possible. ")
+    document.location="/shop";
+    {% endif %}
+</script>
+{% endblock %}
